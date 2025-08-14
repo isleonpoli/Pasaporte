@@ -3,5 +3,5 @@ module co.edu.poli.actividad.pasaporte {
     requires javafx.fxml;
 
     opens co.edu.poli.actividad.pasaporte to javafx.fxml;
-    exports co.edu.poli.actividad.pasaporte;
+   // exports co.edu.poli.actividad.pasaporte;
 }
