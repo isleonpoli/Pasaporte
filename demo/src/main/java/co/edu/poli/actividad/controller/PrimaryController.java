@@ -1,4 +1,4 @@
-package co.edu.poli.actividad.pasaporte;
+package co.edu.poli.actividad.controller;
 
 import java.io.IOException;
 import javafx.fxml.FXML;

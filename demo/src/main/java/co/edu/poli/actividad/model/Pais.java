@@ -31,6 +31,6 @@ public class Pais {
     /**
      * 
      */
-    public void Attribute1;
+    //public void Attribute1;
 
 }
