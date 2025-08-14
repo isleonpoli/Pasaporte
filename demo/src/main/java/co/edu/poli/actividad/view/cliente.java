@@ -21,7 +21,7 @@ public static void main(String[] args) {
     listaCiudades.add(ciudad1);
     //listaCiudades.add(ciudad2);
 
-    Persona persona1 = new Persona("1","Santiago","25/12/2004");
+    Persona persona1 = new Persona("1","profesor","25/12/2004");
 
     Pais pais1 = new Pais("1", "Colombia", listaCiudades);
 
