@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class Visa {
+public class Visa implements Entidad {
 
     /**
      * Default constructor

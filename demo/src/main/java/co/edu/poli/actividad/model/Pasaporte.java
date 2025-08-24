@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class Pasaporte {
+public class Pasaporte implements Entidad {
 
     /**
      * Default constructor

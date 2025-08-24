@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class Ciudad {
+public class Ciudad implements Entidad{
 
     /**
      * Default constructor

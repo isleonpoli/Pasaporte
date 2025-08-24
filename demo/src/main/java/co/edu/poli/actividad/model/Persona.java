@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class Persona {
+public class Persona implements Entidad {
 
     /**
      * Default constructor
