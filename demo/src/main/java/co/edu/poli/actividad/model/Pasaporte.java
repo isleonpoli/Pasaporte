@@ -78,4 +78,15 @@ public class Pasaporte implements Entidad {
         System.out.println("Pais = " + pais);
         System.out.println("Fecha expedición = " + fechaExpedicion);
     }
+
+    @Override
+public String toString() {
+    return "Pasaporte{" +
+            "id=" + id +
+            ", fechaExpedicion='" + fechaExpedicion + '\'' +
+            ", titular=" + (titular != null ? titular.getNombre(): "null") +
+            ", pais=" + (pais != null ? pais.getNombre() : "null") +
+            '}';
+}
+
 }

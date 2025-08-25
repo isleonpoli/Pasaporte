@@ -63,7 +63,7 @@ public class ImplementacionPasaporte implements Interface2 <Pasaporte>{
                 String fechaExpedicion = rs.getString("fecha_expedicion");
 
                 // Recuperar Persona (titular)
-                int personaId = rs.getInt("persona_id");
+                String personaId = rs.getString("persona_id");
                 Persona titular = findPersonaById(conn, personaId);
 
                 // Recuperar Pais
@@ -102,7 +102,7 @@ public List<Pasaporte> findAll() {
             String fechaExpedicion = rs.getString("fecha_expedicion");
 
             // Recuperar Persona (titular)
-            int personaId = rs.getInt("persona_id");
+            String personaId = rs.getString("persona_id");
             Persona titular = findPersonaById(conn, personaId);
 
             // Recuperar Pais
@@ -167,10 +167,10 @@ public boolean delete(String id) {
 
 
         // Métodos auxiliares
-    private Persona findPersonaById(Connection conn, int id) throws SQLException {
+    private Persona findPersonaById(Connection conn, String id) throws SQLException {
         String sql = "SELECT * FROM persona WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new Persona(

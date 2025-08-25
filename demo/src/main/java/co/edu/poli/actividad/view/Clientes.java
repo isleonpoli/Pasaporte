@@ -39,7 +39,7 @@ public class Clientes {
 
                     System.out.println("Ingrese ID de persona: ");
                     String idPersona = sc.nextLine();
-                    sc.nextLine();
+                    //sc.nextLine();
 
                     System.out.println("Ingrese código ISO del país: ");
                     String codigoPais = sc.nextLine();
