@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class Pais implements Entidad {
+public class Pais {
 
     /**
      * Default constructor

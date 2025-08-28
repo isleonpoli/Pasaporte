@@ -1,11 +1,10 @@
 package co.edu.poli.actividad.model;
 
-import java.util.*;
 
 /**
  * 
  */
-public class Pasaporte implements Entidad {
+public class Pasaporte {
 
     /**
      * Default constructor

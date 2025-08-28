@@ -7,13 +7,14 @@ import co.edu.poli.actividad.model.Pasaporte;
 import co.edu.poli.actividad.model.Persona;
 import co.edu.poli.actividad.model.Pais;
 import co.edu.poli.actividad.repositorio.ImplementacionPasaporte;
-import co.edu.poli.actividad.repositorio.Interface2;
+import co.edu.poli.actividad.repositorio.Repository;
+import co.edu.poli.actividad.repositorio.ConexionDB; // importar la conexión
 
 public class Clientes {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Interface2<Pasaporte> repo = new ImplementacionPasaporte();
+        Repository<Pasaporte, String> repo = new ImplementacionPasaporte();
 
         int opcion;
         do {
@@ -30,8 +31,7 @@ public class Clientes {
 
             switch (opcion) {
                 case 1:
-
-                    System.out.println("Ingrese ID pasaporte");
+                    System.out.println("Ingrese ID pasaporte: ");
                     String id = sc.nextLine();
 
                     System.out.println("Ingrese fecha expedición (YYYY-MM-DD): ");
@@ -39,12 +39,15 @@ public class Clientes {
 
                     System.out.println("Ingrese ID de persona: ");
                     String idPersona = sc.nextLine();
-                    //sc.nextLine();
 
                     System.out.println("Ingrese código ISO del país: ");
                     String codigoPais = sc.nextLine();
 
-                    Pasaporte p1 = new Pasaporte(id, fecha, new Persona(idPersona, null, null), new Pais(codigoPais, null, null));
+                    Pasaporte p1 = new Pasaporte(
+                        id, fecha, 
+                        new Persona(idPersona, null, null), 
+                        new Pais(codigoPais, null, null)
+                    );
                     System.out.println(repo.insert(p1));
                     break;
 
@@ -73,12 +76,15 @@ public class Clientes {
 
                     System.out.println("Nuevo ID de persona: ");
                     String idPersonaNueva = sc.nextLine();
-                    sc.nextLine();
 
                     System.out.println("Nuevo código ISO del país: ");
                     String codigoPaisNuevo = sc.nextLine();
 
-                    Pasaporte p3 = new Pasaporte(idUpdate, fechaNueva, new Persona(idPersonaNueva, null, null), new Pais(codigoPaisNuevo, null, null));
+                    Pasaporte p3 = new Pasaporte(
+                        idUpdate, fechaNueva, 
+                        new Persona(idPersonaNueva, null, null), 
+                        new Pais(codigoPaisNuevo, null, null)
+                    );
                     System.out.println(repo.update(p3));
                     break;
 
@@ -102,6 +108,8 @@ public class Clientes {
             }
         } while (opcion != 0);
 
+        // 🔹 Cerrar recursos
         sc.close();
+        ConexionDB.getInstancia().cerrarConexion();//  cerrar conexión Singleton
     }
 }

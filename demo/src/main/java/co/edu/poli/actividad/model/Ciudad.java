@@ -1,11 +1,11 @@
 package co.edu.poli.actividad.model;
 
-import java.util.*;
+
 
 /**
  * 
  */
-public class Ciudad implements Entidad{
+public class Ciudad {
 
     /**
      * Default constructor
