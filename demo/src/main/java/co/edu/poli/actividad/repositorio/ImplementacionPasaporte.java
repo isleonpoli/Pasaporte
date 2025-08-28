@@ -10,7 +10,7 @@ import co.edu.poli.actividad.model.Pais;
 import co.edu.poli.actividad.model.Pasaporte;
 import co.edu.poli.actividad.model.Persona;
 
-public class ImplementacionPasaporte implements Repository<Pasaporte, String> {
+public class ImplementacionPasaporte implements Repository<Pasaporte, String>, FiltrableRepository<Pasaporte> {
 
     private final Connection conn;
 
@@ -46,18 +46,7 @@ public class ImplementacionPasaporte implements Repository<Pasaporte, String> {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                String pasaporteId = rs.getString("id");
-                String fechaExpedicion = rs.getString("fecha_expedicion");
-
-                // Recuperar Persona
-                String personaId = rs.getString("persona_id");
-                Persona titular = findPersonaById(personaId);
-
-                // Recuperar País
-                String paisCodigo = rs.getString("pais_codigoISO");
-                Pais pais = findPaisById(paisCodigo);
-
-                return new Pasaporte(pasaporteId, fechaExpedicion, titular, pais);
+                return construirPasaporte(rs);
             }
 
         } catch (SQLException e) {
@@ -75,25 +64,7 @@ public class ImplementacionPasaporte implements Repository<Pasaporte, String> {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                String pasaporteId = rs.getString("id");
-                String fechaExpedicion = rs.getString("fecha_expedicion");
-
-                // Persona
-                String personaId = rs.getString("persona_id");
-                Persona titular = findPersonaById(personaId);
-
-                // País
-                String paisCodigo = rs.getString("pais_codigoISO");
-                Pais pais = findPaisById(paisCodigo);
-
-                Pasaporte pasaporte = new Pasaporte(
-                        pasaporteId,
-                        fechaExpedicion,
-                        titular,
-                        pais
-                );
-
-                pasaportes.add(pasaporte);
+                pasaportes.add(construirPasaporte(rs));
             }
 
         } catch (SQLException e) {
@@ -137,7 +108,44 @@ public class ImplementacionPasaporte implements Repository<Pasaporte, String> {
         }
     }
 
-    //Métodos auxiliares
+    // 🔍 Nuevo método de búsqueda filtrada
+    @Override
+    public List<Pasaporte> findByIdContains(String criterio) {
+        List<Pasaporte> pasaportes = new ArrayList<>();
+        String sql = "SELECT * FROM pasaporte WHERE id LIKE ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + criterio + "%");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                pasaportes.add(construirPasaporte(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pasaportes;
+    }
+
+    // ============================
+    // Métodos auxiliares
+    // ============================
+
+    private Pasaporte construirPasaporte(ResultSet rs) throws SQLException {
+        String pasaporteId = rs.getString("id");
+        String fechaExpedicion = rs.getString("fecha_expedicion");
+
+        // Persona
+        String personaId = rs.getString("persona_id");
+        Persona titular = findPersonaById(personaId);
+
+        // País
+        String paisCodigo = rs.getString("pais_codigoISO");
+        Pais pais = findPaisById(paisCodigo);
+
+        return new Pasaporte(pasaporteId, fechaExpedicion, titular, pais);
+    }
 
     private Persona findPersonaById(String id) throws SQLException {
         String sql = "SELECT * FROM persona WHERE id = ?";

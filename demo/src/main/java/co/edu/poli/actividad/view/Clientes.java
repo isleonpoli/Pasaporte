@@ -7,23 +7,25 @@ import co.edu.poli.actividad.model.Pasaporte;
 import co.edu.poli.actividad.model.Persona;
 import co.edu.poli.actividad.model.Pais;
 import co.edu.poli.actividad.repositorio.ImplementacionPasaporte;
-import co.edu.poli.actividad.repositorio.Repository;
-import co.edu.poli.actividad.repositorio.ConexionDB; // importar la conexión
+import co.edu.poli.actividad.repositorio.ConexionDB;
 
 public class Clientes {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Repository<Pasaporte, String> repo = new ImplementacionPasaporte();
+
+        // 🔹 Usamos directamente ImplementacionPasaporte (que implementa CRUD y filtrado)
+        ImplementacionPasaporte repo = new ImplementacionPasaporte();
 
         int opcion;
         do {
             System.out.println("\n=== MENÚ PASAPORTE ===");
             System.out.println("1. Insertar pasaporte");
-            System.out.println("2. Buscar pasaporte por ID");
+            System.out.println("2. Buscar pasaporte por ID exacto");
             System.out.println("3. Listar todos los pasaportes");
             System.out.println("4. Actualizar pasaporte");
             System.out.println("5. Eliminar pasaporte");
+            System.out.println("6. Buscar pasaportes cuyo ID contenga un criterio"); // 🔍 Nueva opción
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
             opcion = sc.nextInt();
@@ -44,8 +46,8 @@ public class Clientes {
                     String codigoPais = sc.nextLine();
 
                     Pasaporte p1 = new Pasaporte(
-                        id, fecha, 
-                        new Persona(idPersona, null, null), 
+                        id, fecha,
+                        new Persona(idPersona, null, null),
                         new Pais(codigoPais, null, null)
                     );
                     System.out.println(repo.insert(p1));
@@ -56,15 +58,19 @@ public class Clientes {
                     id = sc.nextLine();
                     Pasaporte p2 = repo.findById(id);
                     if (p2 != null) {
-                        System.out.println("Pasaporte encontrado: " + p2);
+                        System.out.println("✅ Pasaporte encontrado: " + p2);
                     } else {
-                        System.out.println("No se encontró pasaporte con ese ID");
+                        System.out.println("❌ No se encontró pasaporte con ese ID");
                     }
                     break;
 
                 case 3:
                     List<Pasaporte> lista = repo.findAll();
-                    lista.forEach(System.out::println);
+                    if (lista.isEmpty()) {
+                        System.out.println("⚠️ No hay pasaportes registrados.");
+                    } else {
+                        lista.forEach(System.out::println);
+                    }
                     break;
 
                 case 4:
@@ -81,8 +87,8 @@ public class Clientes {
                     String codigoPaisNuevo = sc.nextLine();
 
                     Pasaporte p3 = new Pasaporte(
-                        idUpdate, fechaNueva, 
-                        new Persona(idPersonaNueva, null, null), 
+                        idUpdate, fechaNueva,
+                        new Persona(idPersonaNueva, null, null),
                         new Pais(codigoPaisNuevo, null, null)
                     );
                     System.out.println(repo.update(p3));
@@ -92,24 +98,36 @@ public class Clientes {
                     System.out.println("Ingrese ID del pasaporte a eliminar: ");
                     String idDelete = sc.nextLine();
                     if (repo.delete(idDelete)) {
-                        System.out.println("Pasaporte eliminado correctamente");
+                        System.out.println("✅ Pasaporte eliminado correctamente");
                     } else {
-                        System.out.println("No se encontró pasaporte con ese ID");
+                        System.out.println("❌ No se encontró pasaporte con ese ID");
+                    }
+                    break;
+
+                case 6: // 🔍 Nuevo filtro
+                    System.out.println("Ingrese criterio de búsqueda (parte del ID): ");
+                    String criterio = sc.nextLine();
+                    List<Pasaporte> filtrados = repo.findByIdContains(criterio);
+                    if (filtrados.isEmpty()) {
+                        System.out.println("⚠️ No se encontraron pasaportes con el criterio \"" + criterio + "\"");
+                    } else {
+                        System.out.println("🔎 Pasaportes encontrados:");
+                        filtrados.forEach(System.out::println);
                     }
                     break;
 
                 case 0:
-                    System.out.println("Saliendo...");
+                    System.out.println("👋 Saliendo...");
                     break;
 
                 default:
-                    System.out.println("Opción no válida");
+                    System.out.println("❌ Opción no válida");
                     break;
             }
         } while (opcion != 0);
 
         // 🔹 Cerrar recursos
         sc.close();
-        ConexionDB.getInstancia().cerrarConexion();//  cerrar conexión Singleton
+        ConexionDB.getInstancia().cerrarConexion(); // cerrar conexión Singleton
     }
 }
