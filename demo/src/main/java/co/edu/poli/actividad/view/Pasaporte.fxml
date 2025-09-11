@@ -1,23 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.poli.actividad.controller.PasaporteController">
-   <children>
-      <TextField fx:id="txtIdPasaporte" layoutX="28.0" layoutY="77.0" text="ID Pasaporte" />
-      <TextField fx:id="txtFecha" layoutX="222.0" layoutY="77.0" text="Fecha YYYY-MM-DD" />
-      <TextField fx:id="txtIdPersona" layoutX="418.0" layoutY="77.0" text="ID Persona" />
-      <TextField fx:id="txtCodigoPais" layoutX="28.0" layoutY="161.0" text="Codigo Pais" />
-      <ChoiceBox fx:id="ChoicekTipoPasaporte" layoutX="221.0" layoutY="161.0" prefWidth="150.0" />
-      <TextField fx:id="txtMotivo" layoutX="418.0" layoutY="161.0" text="Motivo" />
-      <Button fx:id="btnCrear" layoutX="58.0" layoutY="270.0" mnemonicParsing="false" onAction="#ClickCrear" text="Crear" />
-      <Button fx:id="btnBuscar" layoutX="152.0" layoutY="270.0" mnemonicParsing="false" onAction="#ClickBuscar" text="Buscar" />
-      <Button fx:id="btnListar" layoutX="253.0" layoutY="270.0" mnemonicParsing="false" onAction="#ClickListar" text="Listar" />
-      <Button fx:id="btnActualizar" layoutX="332.0" layoutY="270.0" mnemonicParsing="false" onAction="#ClickActualizar" text="Actualizar" />
-      <Button fx:id="btnBorrar" layoutX="429.0" layoutY="270.0" mnemonicParsing="false" onAction="#ClickBorrar" text="Borrar" />
-      <Button fx:id="btnFlitrar" layoutX="522.0" layoutY="270.0" mnemonicParsing="false" onAction="#ClickFiltrar" text="Filtrar" />
-   </children>
-</AnchorPane>
+<BorderPane xmlns="http://javafx.com/javafx/13" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.poli.actividad.controller.PasaporteController"
+            stylesheets="@estilos.css">
+
+
+    <!-- 🔹 Parte superior -->
+    <top>
+        <VBox spacing="10" style="-fx-background-color: #f4f6f8;">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <HBox spacing="10">
+                <TextField fx:id="txtIdPasaporte" promptText="ID Pasaporte"/>
+                <TextField fx:id="txtFecha" promptText="Fecha (YYYY-MM-DD)"/>
+                <TextField fx:id="txtIdPersona" promptText="ID Persona"/>
+                <TextField fx:id="txtCodigoPais" promptText="Código País"/>
+            </HBox>
+            <HBox spacing="10">
+                <ChoiceBox fx:id="ChoicekTipoPasaporte" prefWidth="150"/>
+                <TextField fx:id="txtMotivo" promptText="Motivo"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- 🔹 Parte central: Tabla -->
+    <center>
+        <VBox>
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="📋 Resultados:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <TableView fx:id="tablaPasaportes" prefHeight="300">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="100"/>
+                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150"/>
+                    <TableColumn fx:id="colPersona" text="Persona" prefWidth="150"/>
+                    <TableColumn fx:id="colPais" text="País" prefWidth="150"/>
+                    <TableColumn fx:id="colTipo" text="Tipo" prefWidth="100"/>
+                    <TableColumn fx:id="colMotivo" text="Motivo" prefWidth="200"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <!-- 🔹 Parte inferior: Botones -->
+    <bottom>
+        <HBox spacing="15" alignment="center" style="-fx-background-color: #e9ecef;">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Button fx:id="btnCrear" text="Crear" onAction="#ClickCrear"/>
+            <Button fx:id="btnBuscar" text="Buscar" onAction="#ClickBuscar"/>
+            <Button fx:id="btnListar" text="Listar" onAction="#ClickListar"/>
+            <Button fx:id="btnActualizar" text="Actualizar" onAction="#ClickActualizar"/>
+            <Button fx:id="btnBorrar" text="Borrar" onAction="#ClickBorrar"/>
+            <Button fx:id="btnFlitrar" text="Filtrar" onAction="#ClickFiltrar"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,11 +1,9 @@
 package co.edu.poli.actividad.controller;
 
-import co.edu.poli.actividad.model.Pasaporte;
-import co.edu.poli.actividad.model.PasaporteOrdinario;
-import co.edu.poli.actividad.model.PasaporteDiplomatico;
-import co.edu.poli.actividad.model.Persona;
-import co.edu.poli.actividad.model.Pais;
+import co.edu.poli.actividad.model.*;
 import co.edu.poli.actividad.repositorio.ImplementacionPasaporte;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -14,121 +12,36 @@ import java.util.List;
 
 public class PasaporteController {
 
-    @FXML
-    private ChoiceBox<String> ChoicekTipoPasaporte;
+    @FXML private ChoiceBox<String> ChoicekTipoPasaporte;
+    @FXML private TextField txtCodigoPais, txtMotivo, txtFecha, txtIdPasaporte, txtIdPersona;
 
-    @FXML
-    private Button btnActualizar, btnBorrar, btnBuscar, btnCrear, btnFlitrar, btnListar;
+    @FXML private TableView<Pasaporte> tablaPasaportes;
+    @FXML private TableColumn<Pasaporte, String> colId, colFecha, colPersona, colPais, colTipo, colMotivo;
 
-    @FXML
-    private TextField txtCodigoPais, txtMotivo, txtFecha, txtIdPasaporte, txtIdPersona;
-
-    // Repositorio para manejar la BD
     private final ImplementacionPasaporte repo = new ImplementacionPasaporte();
+    private final ObservableList<Pasaporte> data = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        // Inicializamos el ChoiceBox con tipos de pasaporte
+        // Inicializar ChoiceBox
         ChoicekTipoPasaporte.getItems().addAll("Ordinario", "Diplomatico");
+
+        // Enlazar columnas de la tabla
+        colId.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getId()));
+        colFecha.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getFechaExpedicion()));
+        colPersona.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(
+                c.getValue().getTitular() != null ? c.getValue().getTitular().getId() : ""));
+        colPais.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(
+                c.getValue().getPais() != null ? c.getValue().getPais().getCodigoISO() : ""));
+        colTipo.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(
+                c.getValue() instanceof PasaporteOrdinario ? "Ordinario" : "Diplomático"));
+        colMotivo.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(
+                c.getValue() instanceof PasaporteOrdinario ? ((PasaporteOrdinario)c.getValue()).getMotivo()
+                        : c.getValue() instanceof PasaporteDiplomatico ? ((PasaporteDiplomatico)c.getValue()).getMotivo() : ""));
+
+        tablaPasaportes.setItems(data);
     }
 
-    // ======================
-    // CREAR
-    // ======================
-    @FXML
-    void ClickCrear(ActionEvent event) {
-        try {
-            Pasaporte p = construirPasaporte();
-            if (p != null) {
-                String msg = repo.insert(p);
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Resultado", msg);
-            } else {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Debes seleccionar un tipo de pasaporte");
-            }
-        } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Error al crear pasaporte: " + e.getMessage());
-        }
-    }
-
-    // ======================
-    // BUSCAR
-    // ======================
-    @FXML
-    void ClickBuscar(ActionEvent event) {
-        String id = txtIdPasaporte.getText();
-        Pasaporte p = repo.findById(id);
-        if (p != null) {
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Resultado", "Pasaporte encontrado:\n" + p);
-        } else {
-            mostrarAlerta(Alert.AlertType.WARNING, "No encontrado", "No existe un pasaporte con ese ID");
-        }
-    }
-
-    // ======================
-    // LISTAR
-    // ======================
-    @FXML
-    void ClickListar(ActionEvent event) {
-        List<Pasaporte> lista = repo.findAll();
-        if (!lista.isEmpty()) {
-            StringBuilder sb = new StringBuilder("Lista de pasaportes:\n");
-            lista.forEach(p -> sb.append(p).append("\n"));
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Listado", sb.toString());
-        } else {
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Listado", "No hay pasaportes registrados");
-        }
-    }
-
-    // ======================
-    // ACTUALIZAR
-    // ======================
-    @FXML
-    void ClickActualizar(ActionEvent event) {
-        try {
-            Pasaporte p = construirPasaporte();
-            if (p != null) {
-                String msg = repo.update(p);
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Resultado", msg);
-            } else {
-                mostrarAlerta(Alert.AlertType.WARNING, "Advertencia", "Selecciona un tipo de pasaporte");
-            }
-        } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Error al actualizar pasaporte: " + e.getMessage());
-        }
-    }
-
-    // ======================
-    // BORRAR
-    // ======================
-    @FXML
-    void ClickBorrar(ActionEvent event) {
-        String id = txtIdPasaporte.getText();
-        if (repo.delete(id)) {
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Resultado", "✅ Pasaporte eliminado");
-        } else {
-            mostrarAlerta(Alert.AlertType.WARNING, "No encontrado", "❌ No se encontró el pasaporte con ese ID");
-        }
-    }
-
-    // ======================
-    // FILTRAR
-    // ======================
-    @FXML
-    void ClickFiltrar(ActionEvent event) {
-        String criterio = txtIdPasaporte.getText();
-        List<Pasaporte> lista = repo.findByIdContains(criterio);
-        if (!lista.isEmpty()) {
-            StringBuilder sb = new StringBuilder("Resultados del filtro:\n");
-            lista.forEach(p -> sb.append(p).append("\n"));
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Filtro", sb.toString());
-        } else {
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Filtro", "No se encontraron pasaportes con ese criterio");
-        }
-    }
-
-    // ======================
-    // MÉTODOS AUXILIARES
-    // ======================
     private Pasaporte construirPasaporte() {
         String id = txtIdPasaporte.getText();
         String fecha = txtFecha.getText();
@@ -148,11 +61,50 @@ public class PasaporteController {
         return null;
     }
 
-    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alerta = new Alert(tipo);
-        alerta.setTitle(titulo);
-        alerta.setHeaderText(null);
-        alerta.setContentText(mensaje);
-        alerta.showAndWait();
+    @FXML
+    void ClickCrear(ActionEvent event) {
+        Pasaporte p = construirPasaporte();
+        if (p != null) {
+            repo.insert(p);
+            data.add(p);
+        }
+    }
+
+    @FXML
+    void ClickBuscar(ActionEvent event) {
+        String id = txtIdPasaporte.getText();
+        Pasaporte p = repo.findById(id);
+        data.clear();
+        if (p != null) data.add(p);
+    }
+
+    @FXML
+    void ClickListar(ActionEvent event) {
+        List<Pasaporte> lista = repo.findAll();
+        data.setAll(lista);
+    }
+
+    @FXML
+    void ClickActualizar(ActionEvent event) {
+        Pasaporte p = construirPasaporte();
+        if (p != null) {
+            repo.update(p);
+            ClickListar(null);
+        }
+    }
+
+    @FXML
+    void ClickBorrar(ActionEvent event) {
+        String id = txtIdPasaporte.getText();
+        if (repo.delete(id)) {
+            data.removeIf(p -> p.getId().equals(id));
+        }
+    }
+
+    @FXML
+    void ClickFiltrar(ActionEvent event) {
+        String criterio = txtIdPasaporte.getText();
+        List<Pasaporte> lista = repo.findByIdContains(criterio);
+        data.setAll(lista);
     }
 }

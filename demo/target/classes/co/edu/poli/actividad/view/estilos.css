@@ -1,0 +1,73 @@
+/* 🎨 Fondo general */
+.root {
+    -fx-background-color: #f8f9fa;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* 🏷️ Etiquetas */
+.label {
+    -fx-text-fill: #212529;
+    -fx-font-size: 14px;
+}
+
+/* ✏️ Campos de texto */
+.text-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 5px;
+}
+
+.text-field:focused {
+    -fx-border-color: #4dabf7;
+    -fx-effect: dropshadow(three-pass-box, rgba(77,171,247,0.4), 5, 0, 0, 0);
+}
+
+/* 📌 ChoiceBox */
+.choice-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+.choice-box:hover {
+    -fx-border-color: #4dabf7;
+}
+
+/* 📋 Tabla */
+.table-view {
+    -fx-border-color: #dee2e6;
+    -fx-background-color: #ffffff;
+    -fx-table-cell-border-color: #dee2e6;
+}
+
+.table-view .column-header {
+    -fx-background-color: #343a40;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #4dabf7;
+    -fx-text-fill: white;
+}
+
+/* 🔘 Botones */
+.button {
+    -fx-background-color: #4dabf7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-padding: 8 15 8 15;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: #339af0;
+}
+
+.button:pressed {
+    -fx-background-color: #1971c2;
+}
