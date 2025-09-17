@@ -11,7 +11,7 @@ import co.edu.poli.actividad.model.Persona;
 import co.edu.poli.actividad.repositorio.ImplementacionPasaporte;
 import co.edu.poli.actividad.servicios.ConexionDB;
 
-public class Clientes {
+public class Cliente {
 
     public static void main(String[] args) {
         try (Scanner sc = new Scanner(System.in)) {
