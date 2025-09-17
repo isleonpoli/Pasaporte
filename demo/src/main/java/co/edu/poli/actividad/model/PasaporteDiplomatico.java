@@ -1,4 +1,3 @@
-// PasaporteDiplomatico.java
 package co.edu.poli.actividad.model;
 
 public class PasaporteDiplomatico extends Pasaporte {

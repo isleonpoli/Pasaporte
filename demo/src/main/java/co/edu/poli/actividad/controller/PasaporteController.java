@@ -1,14 +1,21 @@
 package co.edu.poli.actividad.controller;
 
-import co.edu.poli.actividad.model.*;
+import java.util.List;
+
+import co.edu.poli.actividad.model.Pais;
+import co.edu.poli.actividad.model.Pasaporte;
+import co.edu.poli.actividad.model.PasaporteDiplomatico;
+import co.edu.poli.actividad.model.PasaporteOrdinario;
+import co.edu.poli.actividad.model.Persona;
 import co.edu.poli.actividad.repositorio.ImplementacionPasaporte;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-
-import java.util.List;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 
 public class PasaporteController {
 
@@ -23,10 +30,9 @@ public class PasaporteController {
 
     @FXML
     public void initialize() {
-        // Inicializar ChoiceBox
+
         ChoicekTipoPasaporte.getItems().addAll("Ordinario", "Diplomatico");
 
-        // Enlazar columnas de la tabla
         colId.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getId()));
         colFecha.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getFechaExpedicion()));
         colPersona.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(

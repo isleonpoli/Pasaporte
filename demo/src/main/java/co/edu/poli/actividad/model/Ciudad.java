@@ -1,26 +1,11 @@
 package co.edu.poli.actividad.model;
 
-
-
-/**
- * 
- */
 public class Ciudad {
 
-    /**
-     * Default constructor
-     */
     public Ciudad() {
     }
 
-    /**
-     * 
-     */
     private String codigo;
-
-    /**
-     * 
-     */
     private String nombre;
 
     public Ciudad(String codigo, String nombre) {

@@ -1,31 +1,14 @@
 package co.edu.poli.actividad.model;
 
-
-
-/**
- * 
- */
 public class Persona{
 
-    /**
-     * Default constructor
-     */
     public Persona() {
     }
 
-    /**
-     * 
-     */
     private String id;
 
-    /**
-     * 
-     */
     private String nombre;
 
-    /**
-     * 
-     */
     private String fechaNacimiento;
 
     public Persona(String id, String nombre, String fechaNacimiento) {

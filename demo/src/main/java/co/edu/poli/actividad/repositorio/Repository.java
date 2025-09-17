@@ -1,9 +1,6 @@
 package co.edu.poli.actividad.repositorio;
 
-import java.util.*;
-
-
-
+import java.util.List;
 
 public interface Repository <T, ID> {
     String insert(T entity);

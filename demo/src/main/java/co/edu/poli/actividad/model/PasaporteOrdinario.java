@@ -1,4 +1,3 @@
-// PasaporteOrdinal.java
 package co.edu.poli.actividad.model;
 
 

@@ -1,31 +1,15 @@
 package co.edu.poli.actividad.model;
 
-import java.util.*;
+import java.util.List;
 
-/**
- * 
- */
 public class Pais {
 
-    /**
-     * Default constructor
-     */
     public Pais() {
     }
 
-    /**
-     * 
-     */
     private String codigoISO;
-
-    /**
-     * 
-     */
     private String nombre;
 
-    /**
-     * 
-     */
     private List<Ciudad> ciudad;
 
     public Pais(String codigoISO, String nombre, List<Ciudad> ciudad) {

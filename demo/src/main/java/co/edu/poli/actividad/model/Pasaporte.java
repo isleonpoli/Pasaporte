@@ -1,10 +1,5 @@
 package co.edu.poli.actividad.model;
 
-
-/**
- * 
- */
-// Pasaporte abstracto
 public abstract class Pasaporte {
     protected String id;
     protected String fechaExpedicion;
@@ -19,8 +14,6 @@ public abstract class Pasaporte {
         this.titular = titular;
         this.pais = pais;
     }
-
-    // getters y setters comunes
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
