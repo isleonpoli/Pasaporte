@@ -9,13 +9,16 @@ import co.edu.poli.actividad.model.Pasaporte;
 import co.edu.poli.actividad.model.PasaporteDiplomatico;
 import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.Persona;
-import co.edu.poli.actividad.repositorio.ImplementacionPasaporte;
-import co.edu.poli.actividad.servicios.ConexionDB;
+import co.edu.poli.actividad.repository.ImplementacionPasaporte;
+import co.edu.poli.actividad.services.ConexionDB;
 
 public class Cliente {
 
     public static void main(String[] args) {
         ImplementacionPasaporte repo = new ImplementacionPasaporte();
+
+        // 🔹 Persona prototipo (se reutilizará con clone())
+        Persona prototipoPersona = null;
 
         try (Scanner sc = new Scanner(System.in)) {
             int opcion;
@@ -27,6 +30,7 @@ public class Cliente {
                 System.out.println("4. Actualizar pasaporte");
                 System.out.println("5. Eliminar pasaporte");
                 System.out.println("6. Buscar pasaportes cuyo ID contenga un criterio");
+                System.out.println("7. Definir prototipo Persona");
                 System.out.println("0. Salir");
                 System.out.print("Seleccione una opción: ");
                 opcion = sc.nextInt();
@@ -39,9 +43,6 @@ public class Cliente {
 
                         System.out.println("Ingrese fecha expedición (YYYY-MM-DD): ");
                         String fecha = sc.nextLine();
-
-                        System.out.println("Ingrese ID de persona: ");
-                        String idPersona = sc.nextLine();
 
                         System.out.println("Ingrese código ISO del país: ");
                         String codigoPais = sc.nextLine();
@@ -56,19 +57,29 @@ public class Cliente {
                             motivo = sc.nextLine();
                         }
 
-                        Pasaporte p1;
+                        // 🔹 Usamos la persona prototipo o pedimos manual si no existe
+                        Persona titular;
+                        if (prototipoPersona != null) {
+                            titular = prototipoPersona.clone();
+                            System.out.println("✔ Persona clonada desde prototipo: " + titular);
+                        } else {
+                            System.out.println("Ingrese ID de persona: ");
+                            String idPersona = sc.nextLine();
+                            titular = new Persona(idPersona, null, null);
+                        }
 
+                        Pais pais = new Pais(codigoPais, null, null);
+
+                        Pasaporte p1;
                         switch (tipo) {
                             case 1: {
-                                // Usar el Builder de PasaporteOrdinario
                                 PasaporteOrdinario.Builder builder = new PasaporteOrdinario.Builder();
                                 builder.id(id)
                                         .fechaExpedicion(fecha)
-                                        .titular(new Persona(idPersona, null, null))
-                                        .pais(new Pais(codigoPais, null, null))
+                                        .titular(titular)
+                                        .pais(pais)
                                         .motivo(motivo);
 
-                                // Preguntar si desea agregar elemento de seguridad
                                 System.out.println("¿Desea agregar elemento de seguridad? (s/n): ");
                                 String agregarElemento = sc.nextLine();
 
@@ -79,7 +90,6 @@ public class Cliente {
                                     System.out.println("Descripción: ");
                                     String descripcion = sc.nextLine();
 
-                                    // Crear elemento de seguridad
                                     ElementoSeguridad elemento = new ElementoSeguridad.Builder()
                                             .id(id)
                                             .tipo(tipoElemento)
@@ -87,31 +97,28 @@ public class Cliente {
                                             .build();
 
                                     builder.elementoSeguridad(elemento);
-
                                 }
 
                                 p1 = builder.build();
                                 break;
                             }
                             case 2: {
-                                p1 = new PasaporteDiplomatico(id, fecha, new Persona(idPersona, null, null), new Pais(codigoPais, null, null), motivo);
+                                p1 = new PasaporteDiplomatico(id, fecha, titular, pais, motivo);
                                 break;
                             }
                             default: {
                                 System.out.println("Tipo no válido, se creará como Ordinario con motivo por defecto.");
-                                // Usar el Builder para el caso por defecto también
                                 PasaporteOrdinario.Builder builder = new PasaporteOrdinario.Builder();
                                 p1 = builder.id(id)
                                         .fechaExpedicion(fecha)
-                                        .titular(new Persona(idPersona, null, null))
-                                        .pais(new Pais(codigoPais, null, null))
+                                        .titular(titular)
+                                        .pais(pais)
                                         .motivo("Viaje")
                                         .build();
                                 break;
                             }
                         }
 
-                        // FALTABA ESTA LÍNEA: Insertar el pasaporte en la base de datos
                         System.out.println(repo.insert(p1));
                         break;
                     }
@@ -145,15 +152,12 @@ public class Cliente {
                         System.out.println("Nueva fecha expedición (YYYY-MM-DD): ");
                         String fechaNueva = sc.nextLine();
 
-                        System.out.println("Nuevo ID de persona: ");
-                        String idPersonaNueva = sc.nextLine();
-
                         System.out.println("Nuevo código ISO del país: ");
                         String codigoPaisNuevo = sc.nextLine();
 
                         System.out.println("Nuevo tipo de pasaporte (1: Ordinario, 2: Diplomático): ");
                         int tipoNuevo = sc.nextInt();
-                        sc.nextLine(); // limpiar buffer
+                        sc.nextLine(); 
 
                         String motivoNuevo = "";
                         if (tipoNuevo == 1 || tipoNuevo == 2) {
@@ -161,18 +165,28 @@ public class Cliente {
                             motivoNuevo = sc.nextLine();
                         }
 
+                        Persona titularUpdate;
+                        if (prototipoPersona != null) {
+                            titularUpdate = prototipoPersona.clone();
+                            System.out.println("✔ Persona clonada desde prototipo para actualización: " + titularUpdate);
+                        } else {
+                            System.out.println("Nuevo ID de persona: ");
+                            String idPersonaNueva = sc.nextLine();
+                            titularUpdate = new Persona(idPersonaNueva, null, null);
+                        }
+
+                        Pais paisNuevo = new Pais(codigoPaisNuevo, null, null);
                         Pasaporte p3;
+
                         switch (tipoNuevo) {
                             case 1: {
-                                // Usar el Builder de PasaporteOrdinario
                                 PasaporteOrdinario.Builder builder = new PasaporteOrdinario.Builder();
                                 builder.id(idUpdate)
                                         .fechaExpedicion(fechaNueva)
-                                        .titular(new Persona(idPersonaNueva, null, null))
-                                        .pais(new Pais(codigoPaisNuevo, null, null))
+                                        .titular(titularUpdate)
+                                        .pais(paisNuevo)
                                         .motivo(motivoNuevo);
 
-                                // Preguntar si desea agregar elemento de seguridad
                                 System.out.println("¿Desea agregar elemento de seguridad? (s/n): ");
                                 String agregarElemento = sc.nextLine();
 
@@ -183,7 +197,6 @@ public class Cliente {
                                     System.out.println("Descripción: ");
                                     String descripcion = sc.nextLine();
 
-                                    // Crear elemento de seguridad
                                     ElementoSeguridad elemento = new ElementoSeguridad.Builder()
                                             .id(idUpdate)
                                             .tipo(tipoElemento)
@@ -197,24 +210,22 @@ public class Cliente {
                                 break;
                             }
                             case 2: {
-                                p3 = new PasaporteDiplomatico(idUpdate, fechaNueva, new Persona(idPersonaNueva, null, null), new Pais(codigoPaisNuevo, null, null), motivoNuevo);
+                                p3 = new PasaporteDiplomatico(idUpdate, fechaNueva, titularUpdate, paisNuevo, motivoNuevo);
                                 break;
                             }
                             default: {
                                 System.out.println("Tipo no válido, se actualizará como Ordinario con motivo por defecto.");
-                                // Usar el Builder para el caso por defecto también
                                 PasaporteOrdinario.Builder builder = new PasaporteOrdinario.Builder();
                                 p3 = builder.id(idUpdate)
                                         .fechaExpedicion(fechaNueva)
-                                        .titular(new Persona(idPersonaNueva, null, null))
-                                        .pais(new Pais(codigoPaisNuevo, null, null))
+                                        .titular(titularUpdate)
+                                        .pais(paisNuevo)
                                         .motivo("Viaje")
                                         .build();
                                 break;
                             }
                         }
 
-                        // FALTABA ESTA LÍNEA: Actualizar el pasaporte en la base de datos
                         System.out.println(repo.update(p3));
                         break;
                     }
@@ -240,6 +251,20 @@ public class Cliente {
                             System.out.println(" Pasaportes encontrados:");
                             filtrados.forEach(System.out::println);
                         }
+                        break;
+                    }
+
+                    case 7: {
+                        System.out.println("Definir prototipo Persona");
+                        System.out.println("Ingrese ID persona: ");
+                        String idPersona = sc.nextLine();
+                        System.out.println("Ingrese nombre: ");
+                        String nombre = sc.nextLine();
+                        System.out.println("Ingrese fecha nacimiento (YYYY-MM-DD): ");
+                        String fechaNac = sc.nextLine();
+
+                        prototipoPersona = new Persona(idPersona, nombre, fechaNac);
+                        System.out.println("✔ Prototipo de Persona definido: " + prototipoPersona);
                         break;
                     }
 

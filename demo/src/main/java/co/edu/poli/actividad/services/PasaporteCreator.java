@@ -1,5 +1,5 @@
 // interface creadora
-package co.edu.poli.actividad.servicios;
+package co.edu.poli.actividad.services;
 import co.edu.poli.actividad.model.Pasaporte;
 
 public interface PasaporteCreator {

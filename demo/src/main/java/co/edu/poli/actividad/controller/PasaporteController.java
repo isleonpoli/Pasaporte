@@ -7,7 +7,7 @@ import co.edu.poli.actividad.model.Pasaporte;
 import co.edu.poli.actividad.model.PasaporteDiplomatico;
 import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.Persona;
-import co.edu.poli.actividad.repositorio.ImplementacionPasaporte;
+import co.edu.poli.actividad.repository.ImplementacionPasaporte;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -60,7 +60,7 @@ public class PasaporteController {
         Pais pais = new Pais(codigoPais, null, null);
 
         if ("Ordinario".equals(tipo)) {
-            return new PasaporteOrdinario(id, fecha, persona, pais, motivo);
+            //return new PasaporteOrdinario(id, fecha, persona, pais, motivo);
         } else if ("Diplomatico".equals(tipo)) {
             return new PasaporteDiplomatico(id, fecha, persona, pais, motivo);
         }

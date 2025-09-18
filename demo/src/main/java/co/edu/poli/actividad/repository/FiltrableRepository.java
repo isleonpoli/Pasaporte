@@ -1,4 +1,4 @@
-package co.edu.poli.actividad.repositorio;
+package co.edu.poli.actividad.repository;
 
 import java.util.List;
 

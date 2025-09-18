@@ -1,5 +1,5 @@
 // creador concreto para ordinal
-package co.edu.poli.actividad.servicios;
+package co.edu.poli.actividad.services;
 import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.Pasaporte;
 

@@ -1,6 +1,6 @@
 
 // creador concreto para diplomático
-package co.edu.poli.actividad.servicios;
+package co.edu.poli.actividad.services;
 import co.edu.poli.actividad.model.PasaporteDiplomatico;
 import co.edu.poli.actividad.model.Pasaporte;
 

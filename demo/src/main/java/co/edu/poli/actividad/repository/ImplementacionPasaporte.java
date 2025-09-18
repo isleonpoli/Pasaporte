@@ -1,4 +1,4 @@
-package co.edu.poli.actividad.repositorio;
+package co.edu.poli.actividad.repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +13,7 @@ import co.edu.poli.actividad.model.Pasaporte;
 import co.edu.poli.actividad.model.PasaporteDiplomatico;
 import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.Persona;
-import co.edu.poli.actividad.servicios.ConexionDB;
+import co.edu.poli.actividad.services.ConexionDB;
 
 public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
 
