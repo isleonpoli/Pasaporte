@@ -1,12 +1,17 @@
 package co.edu.poli.actividad.repositorio;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import co.edu.poli.actividad.model.ElementoSeguridad;
 import co.edu.poli.actividad.model.Pais;
 import co.edu.poli.actividad.model.Pasaporte;
-import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.PasaporteDiplomatico;
+import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.Persona;
 import co.edu.poli.actividad.servicios.ConexionDB;
 
@@ -47,6 +52,18 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
                     ps.setString(2, po.getMotivo());
                     ps.executeUpdate();
                 }
+
+                // Insertar elemento de seguridad si existe
+                ElementoSeguridad es = po.getElementoSeguridad();
+                if (es != null) {
+                    String sqlElemento = "INSERT INTO elemento_seguridad (id, tipo, descripcion) VALUES (?, ?, ?)";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlElemento)) {
+                        ps.setString(1, es.getId()); // mismo id del pasaporte
+                        ps.setString(2, es.getTipo());
+                        ps.setString(3, es.getDescripcion());
+                        ps.executeUpdate();
+                    }
+                }
             } else if (p instanceof PasaporteDiplomatico) {
                 PasaporteDiplomatico pd = (PasaporteDiplomatico) p;
                 try (PreparedStatement ps = conn.prepareStatement(sqlDiplomatico)) {
@@ -60,11 +77,19 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
             return "✅ Pasaporte insertado correctamente";
 
         } catch (SQLException e) {
-            try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
             return "Error al insertar pasaporte: " + e.getMessage();
         } finally {
-            try { conn.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -73,11 +98,13 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
     // ======================
     @Override
     public Pasaporte findById(String id) {
-        String sql = "SELECT p.*, o.motivo AS motivo_ordinario, d.motivo AS motivo_diplomatico " +
-                     "FROM pasaporte p " +
-                     "LEFT JOIN pasaporte_ordinario o ON p.id = o.id " +
-                     "LEFT JOIN pasaporte_diplomatico d ON p.id = d.id " +
-                     "WHERE p.id = ?";
+        String sql = "SELECT p.*, o.motivo AS motivo_ordinario, d.motivo AS motivo_diplomatico, "
+                + "es.tipo AS tipo_elemento, es.descripcion AS descripcion_elemento "
+                + "FROM pasaporte p "
+                + "LEFT JOIN pasaporte_ordinario o ON p.id = o.id "
+                + "LEFT JOIN pasaporte_diplomatico d ON p.id = d.id "
+                + "LEFT JOIN elemento_seguridad es ON p.id = es.id "
+                + "WHERE p.id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
@@ -88,13 +115,24 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
                 Pais pais = findPaisById(rs.getString("pais_codigoISO"));
 
                 if (rs.getString("motivo_ordinario") != null) {
-                    return new PasaporteOrdinario(
-                            rs.getString("id"),
-                            rs.getString("fecha_expedicion"),
-                            titular,
-                            pais,
-                            rs.getString("motivo_ordinario")
-                    );
+                    PasaporteOrdinario po = new PasaporteOrdinario();
+                    po.setId(rs.getString("id"));
+                    po.setFechaExpedicion(rs.getString("fecha_expedicion"));
+                    po.setTitular(titular);
+                    po.setPais(pais);
+                    po.setMotivo(rs.getString("motivo_ordinario"));
+
+                    // Elemento de seguridad
+                    String tipoElemento = rs.getString("tipo_elemento");
+                    if (tipoElemento != null) {
+                        ElementoSeguridad es = new ElementoSeguridad.Builder()
+                                .id(rs.getString("id"))
+                                .tipo(tipoElemento)
+                                .descripcion(rs.getString("descripcion_elemento"))
+                                .build();
+                        po.setElementoSeguridad(es);
+                    }
+                    return po; // ¡Este return faltaba!
                 } else if (rs.getString("motivo_diplomatico") != null) {
                     return new PasaporteDiplomatico(
                             rs.getString("id"),
@@ -117,10 +155,12 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
     @Override
     public List<Pasaporte> findAll() {
         List<Pasaporte> pasaportes = new ArrayList<>();
-        String sql = "SELECT p.*, o.motivo AS motivo_ordinario, d.motivo AS motivo_diplomatico " +
-                     "FROM pasaporte p " +
-                     "LEFT JOIN pasaporte_ordinario o ON p.id = o.id " +
-                     "LEFT JOIN pasaporte_diplomatico d ON p.id = d.id";
+        String sql = "SELECT p.*, o.motivo AS motivo_ordinario, d.motivo AS motivo_diplomatico, "
+                + "es.tipo AS tipo_elemento, es.descripcion AS descripcion_elemento "
+                + "FROM pasaporte p "
+                + "LEFT JOIN pasaporte_ordinario o ON p.id = o.id "
+                + "LEFT JOIN pasaporte_diplomatico d ON p.id = d.id "
+                + "LEFT JOIN elemento_seguridad es ON p.id = es.id";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -130,13 +170,24 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
                 Pais pais = findPaisById(rs.getString("pais_codigoISO"));
 
                 if (rs.getString("motivo_ordinario") != null) {
-                    pasaportes.add(new PasaporteOrdinario(
-                            rs.getString("id"),
-                            rs.getString("fecha_expedicion"),
-                            titular,
-                            pais,
-                            rs.getString("motivo_ordinario")
-                    ));
+                    PasaporteOrdinario po = new PasaporteOrdinario();
+                    po.setId(rs.getString("id"));
+                    po.setFechaExpedicion(rs.getString("fecha_expedicion"));
+                    po.setTitular(titular);
+                    po.setPais(pais);
+                    po.setMotivo(rs.getString("motivo_ordinario"));
+
+                    // Elemento de seguridad
+                    String tipoElemento = rs.getString("tipo_elemento");
+                    if (tipoElemento != null) {
+                        ElementoSeguridad es = new ElementoSeguridad.Builder()
+                                .id(rs.getString("id"))
+                                .tipo(tipoElemento)
+                                .descripcion(rs.getString("descripcion_elemento"))
+                                .build();
+                        po.setElementoSeguridad(es);
+                    }
+                    pasaportes.add(po);
                 } else if (rs.getString("motivo_diplomatico") != null) {
                     pasaportes.add(new PasaporteDiplomatico(
                             rs.getString("id"),
@@ -183,6 +234,25 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
                     ps.setString(2, po.getId());
                     ps.executeUpdate();
                 }
+
+                // Actualizar elemento de seguridad
+                String deleteElemento = "DELETE FROM elemento_seguridad WHERE id = ?";
+                try (PreparedStatement ps = conn.prepareStatement(deleteElemento)) {
+                    ps.setString(1, po.getId());
+                    ps.executeUpdate();
+                }
+
+                ElementoSeguridad es = po.getElementoSeguridad();
+                if (es != null) {
+                    String sqlElemento = "INSERT INTO elemento_seguridad (id, tipo, descripcion) VALUES (?, ?, ?)";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlElemento)) {
+                        ps.setString(1, es.getId());
+                        ps.setString(2, es.getTipo());
+                        ps.setString(3, es.getDescripcion());
+                        ps.executeUpdate();
+                    }
+                }
+
             } else if (p instanceof PasaporteDiplomatico) {
                 PasaporteDiplomatico pd = (PasaporteDiplomatico) p;
                 try (PreparedStatement ps = conn.prepareStatement(sqlDiplomatico)) {
@@ -196,11 +266,19 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
             return "✅ Pasaporte actualizado correctamente";
 
         } catch (SQLException e) {
-            try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
             return "Error al actualizar pasaporte: " + e.getMessage();
         } finally {
-            try { conn.setAutoCommit(true); } catch (SQLException ex) { ex.printStackTrace(); }
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -209,6 +287,8 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
     // ======================
     @Override
     public boolean delete(String id) {
+        // No es necesario eliminar manualmente de elemento_seguridad
+        // porque se configuró ON DELETE CASCADE en la FK
         String sql = "DELETE FROM pasaporte WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
@@ -226,11 +306,13 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
     @Override
     public List<Pasaporte> findByIdContains(String criterio) {
         List<Pasaporte> pasaportes = new ArrayList<>();
-        String sql = "SELECT p.*, o.motivo AS motivo_ordinario, d.motivo AS motivo_diplomatico " +
-                     "FROM pasaporte p " +
-                     "LEFT JOIN pasaporte_ordinario o ON p.id = o.id " +
-                     "LEFT JOIN pasaporte_diplomatico d ON p.id = d.id " +
-                     "WHERE p.id LIKE ?";
+        String sql = "SELECT p.*, o.motivo AS motivo_ordinario, d.motivo AS motivo_diplomatico, "
+                + "es.tipo AS tipo_elemento, es.descripcion AS descripcion_elemento "
+                + "FROM pasaporte p "
+                + "LEFT JOIN pasaporte_ordinario o ON p.id = o.id "
+                + "LEFT JOIN pasaporte_diplomatico d ON p.id = d.id "
+                + "LEFT JOIN elemento_seguridad es ON p.id = es.id "
+                + "WHERE p.id LIKE ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + criterio + "%");
@@ -241,13 +323,24 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
                 Pais pais = findPaisById(rs.getString("pais_codigoISO"));
 
                 if (rs.getString("motivo_ordinario") != null) {
-                    pasaportes.add(new PasaporteOrdinario(
-                            rs.getString("id"),
-                            rs.getString("fecha_expedicion"),
-                            titular,
-                            pais,
-                            rs.getString("motivo_ordinario")
-                    ));
+                    PasaporteOrdinario po = new PasaporteOrdinario();
+                    po.setId(rs.getString("id"));
+                    po.setFechaExpedicion(rs.getString("fecha_expedicion"));
+                    po.setTitular(titular);
+                    po.setPais(pais);
+                    po.setMotivo(rs.getString("motivo_ordinario"));
+
+                    // Elemento de seguridad
+                    String tipoElemento = rs.getString("tipo_elemento");
+                    if (tipoElemento != null) {
+                        ElementoSeguridad es = new ElementoSeguridad.Builder()
+                                .id(rs.getString("id"))
+                                .tipo(tipoElemento)
+                                .descripcion(rs.getString("descripcion_elemento"))
+                                .build();
+                        po.setElementoSeguridad(es);
+                    }
+                    pasaportes.add(po);
                 } else if (rs.getString("motivo_diplomatico") != null) {
                     pasaportes.add(new PasaporteDiplomatico(
                             rs.getString("id"),
@@ -268,7 +361,7 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
     // ======================
     // Métodos auxiliares
     // ======================
-    private Persona findPersonaById(String id) throws SQLException {
+    private Persona findPersonaById(String id) {
         String sql = "SELECT * FROM persona WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
@@ -280,11 +373,13 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
                         rs.getString("fecha_nacimiento")
                 );
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    private Pais findPaisById(String codigoISO) throws SQLException {
+    private Pais findPaisById(String codigoISO) {
         String sql = "SELECT * FROM pais WHERE codigoISO = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, codigoISO);
@@ -296,6 +391,8 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
                         new ArrayList<>()
                 );
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
