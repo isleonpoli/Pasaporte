@@ -3,12 +3,10 @@ package co.edu.poli.actividad.repositorio;
 import java.sql.*;
 import java.util.*;
 
-import co.edu.poli.actividad.model.Pais;
-import co.edu.poli.actividad.model.Pasaporte;
-import co.edu.poli.actividad.model.PasaporteOrdinario;
-import co.edu.poli.actividad.model.PasaporteDiplomatico;
-import co.edu.poli.actividad.model.Persona;
+import co.edu.poli.actividad.model.*;
 import co.edu.poli.actividad.servicios.ConexionDB;
+import co.edu.poli.actividad.servicios.PasaporteOrdinarioBuilder;
+import co.edu.poli.actividad.servicios.PersonaWrapper;
 
 public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
 
@@ -84,17 +82,18 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                Persona titular = findPersonaById(rs.getString("persona_id"));
+                Persona titular = clonarPersona(rs.getString("persona_id"));
                 Pais pais = findPaisById(rs.getString("pais_codigoISO"));
 
                 if (rs.getString("motivo_ordinario") != null) {
-                    return new PasaporteOrdinario(
-                            rs.getString("id"),
-                            rs.getString("fecha_expedicion"),
-                            titular,
-                            pais,
-                            rs.getString("motivo_ordinario")
-                    );
+                    // Usamos el Builder para crear el pasaporte ordinario
+                    return new PasaporteOrdinarioBuilder()
+                            .id(rs.getString("id"))
+                            .fechaExpedicion(rs.getString("fecha_expedicion"))
+                            .titular(titular)
+                            .pais(pais)
+                            .motivo(rs.getString("motivo_ordinario"))
+                            .build();
                 } else if (rs.getString("motivo_diplomatico") != null) {
                     return new PasaporteDiplomatico(
                             rs.getString("id"),
@@ -126,17 +125,18 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Persona titular = findPersonaById(rs.getString("persona_id"));
+                Persona titular = clonarPersona(rs.getString("persona_id"));
                 Pais pais = findPaisById(rs.getString("pais_codigoISO"));
 
                 if (rs.getString("motivo_ordinario") != null) {
-                    pasaportes.add(new PasaporteOrdinario(
-                            rs.getString("id"),
-                            rs.getString("fecha_expedicion"),
-                            titular,
-                            pais,
-                            rs.getString("motivo_ordinario")
-                    ));
+                    pasaportes.add(new PasaporteOrdinarioBuilder()
+                            .id(rs.getString("id"))
+                            .fechaExpedicion(rs.getString("fecha_expedicion"))
+                            .titular(titular)
+                            .pais(pais)
+                            .motivo(rs.getString("motivo_ordinario"))
+                            .build()
+                    );
                 } else if (rs.getString("motivo_diplomatico") != null) {
                     pasaportes.add(new PasaporteDiplomatico(
                             rs.getString("id"),
@@ -237,17 +237,18 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Persona titular = findPersonaById(rs.getString("persona_id"));
+                Persona titular = clonarPersona(rs.getString("persona_id"));
                 Pais pais = findPaisById(rs.getString("pais_codigoISO"));
 
                 if (rs.getString("motivo_ordinario") != null) {
-                    pasaportes.add(new PasaporteOrdinario(
-                            rs.getString("id"),
-                            rs.getString("fecha_expedicion"),
-                            titular,
-                            pais,
-                            rs.getString("motivo_ordinario")
-                    ));
+                    pasaportes.add(new PasaporteOrdinarioBuilder()
+                            .id(rs.getString("id"))
+                            .fechaExpedicion(rs.getString("fecha_expedicion"))
+                            .titular(titular)
+                            .pais(pais)
+                            .motivo(rs.getString("motivo_ordinario"))
+                            .build()
+                    );
                 } else if (rs.getString("motivo_diplomatico") != null) {
                     pasaportes.add(new PasaporteDiplomatico(
                             rs.getString("id"),
@@ -268,17 +269,20 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
     // ======================
     // Métodos auxiliares
     // ======================
-    private Persona findPersonaById(String id) throws SQLException {
+
+    private Persona clonarPersona(String id) throws SQLException {
         String sql = "SELECT * FROM persona WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new Persona(
+                Persona p = new Persona(
                         rs.getString("id"),
                         rs.getString("nombre"),
                         rs.getString("fecha_nacimiento")
                 );
+                // usamos el Prototype (Wrapper)
+                return new PersonaWrapper(p).clonar();
             }
         }
         return null;
@@ -300,3 +304,4 @@ public class ImplementacionPasaporte implements FiltrableRepository<Pasaporte> {
         return null;
     }
 }
+    
