@@ -1,5 +1,6 @@
 package co.edu.poli.actividad.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import co.edu.poli.actividad.model.Pais;
@@ -12,10 +13,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class PasaporteController {
 
@@ -113,4 +117,19 @@ public class PasaporteController {
         List<Pasaporte> lista = repo.findByIdContains(criterio);
         data.setAll(lista);
     }
+    @FXML
+    private void VerEspaciosGeograficos() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/poli/actividad/view/EspaciosGeograficos.fxml"));
+        Scene scene = new Scene(loader.load());
+        Stage stage = new Stage();
+        stage.setTitle("Espacios Geográficos");
+        stage.setScene(scene);
+        stage.show();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+
 }

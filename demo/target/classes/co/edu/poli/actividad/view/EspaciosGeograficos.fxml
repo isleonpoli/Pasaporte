@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.poli.actividad.controller.EspaciosGeograficosController"
+            prefWidth="400" prefHeight="400">
+    <TreeView fx:id="treeView" layoutX="20" layoutY="20" prefWidth="360" prefHeight="360" />
+</AnchorPane>

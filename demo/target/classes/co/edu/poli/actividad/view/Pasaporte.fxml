@@ -60,6 +60,7 @@
             <Button fx:id="btnActualizar" text="Actualizar" onAction="#ClickActualizar"/>
             <Button fx:id="btnBorrar" text="Borrar" onAction="#ClickBorrar"/>
             <Button fx:id="btnFlitrar" text="Filtrar" onAction="#ClickFiltrar"/>
+            <Button fx:id="btnVerRegiones" text="Ver Regiones" onAction="#VerEspaciosGeograficos"/>
         </HBox>
     </bottom>
 
