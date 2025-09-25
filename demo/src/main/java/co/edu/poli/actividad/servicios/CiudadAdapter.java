@@ -5,7 +5,7 @@ import java.util.List;
 
 import co.edu.poli.actividad.model.Ciudad;
 
-public class CiudadAdapter implements EspaciosGeograficos {
+public class CiudadAdapter implements EspaciosGeografico {
 
     private Ciudad ciudad;
 
@@ -19,7 +19,7 @@ public class CiudadAdapter implements EspaciosGeograficos {
     }
 
     @Override
-    public List<EspaciosGeograficos> getHijos() {
+    public List<EspaciosGeografico> getHijos() {
         return Collections.emptyList();
     }
 

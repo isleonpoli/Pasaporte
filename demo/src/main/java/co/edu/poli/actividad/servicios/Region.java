@@ -3,21 +3,21 @@ package co.edu.poli.actividad.servicios;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Regiones implements EspaciosGeograficos {
+public class Region implements EspaciosGeografico {
 
     private String nombre;
-    private List<EspaciosGeograficos> hijos;
+    private List<EspaciosGeografico> hijos;
 
-    public Regiones(String nombre) {
+    public Region(String nombre) {
         this.nombre = nombre;
         this.hijos = new ArrayList<>();
     }
 
-    public void agregar(EspaciosGeograficos espacio) {
+    public void agregar(EspaciosGeografico espacio) {
         hijos.add(espacio);
     }
 
-    public void eliminar(EspaciosGeograficos espacio) {
+    public void eliminar(EspaciosGeografico espacio) {
         hijos.remove(espacio);
     }
 
@@ -27,7 +27,7 @@ public class Regiones implements EspaciosGeograficos {
     }
 
     @Override
-    public List<EspaciosGeograficos> getHijos() {
+    public List<EspaciosGeografico> getHijos() {
         return hijos;
     }
 }

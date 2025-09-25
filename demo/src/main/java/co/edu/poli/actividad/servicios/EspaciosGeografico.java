@@ -2,7 +2,7 @@ package co.edu.poli.actividad.servicios;
 
 import java.util.List;
 
-public interface EspaciosGeograficos {
+public interface EspaciosGeografico {
     String getNombre();
-    List<EspaciosGeograficos> getHijos();
+    List<EspaciosGeografico> getHijos();
 }
