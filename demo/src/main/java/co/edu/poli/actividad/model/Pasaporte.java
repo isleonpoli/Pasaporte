@@ -5,15 +5,22 @@ public abstract class Pasaporte {
     protected String fechaExpedicion;
     protected Persona titular;
     protected Pais pais;
+    protected ElementoSeguridad elementoSeguridad;
 
     public Pasaporte() {}
 
     public Pasaporte(String id, String fechaExpedicion, Persona titular, Pais pais) {
+    this(id, fechaExpedicion, titular, pais, null);
+}
+
+    public Pasaporte(String id, String fechaExpedicion, Persona titular, Pais pais, ElementoSeguridad elementoSeguridad) {
         this.id = id;
         this.fechaExpedicion = fechaExpedicion;
         this.titular = titular;
         this.pais = pais;
+        this.elementoSeguridad = elementoSeguridad;
     }
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -26,6 +33,14 @@ public abstract class Pasaporte {
     public Pais getPais() { return pais; }
     public void setPais(Pais pais) { this.pais = pais; }
 
+    public ElementoSeguridad getElementoSeguridad() {
+        return elementoSeguridad;
+    }
+
+    public void setElementoSeguridad(ElementoSeguridad elementoSeguridad) {
+        this.elementoSeguridad = elementoSeguridad;
+    }
+
     @Override
     public String toString() {
         return "Pasaporte{" +
@@ -33,6 +48,7 @@ public abstract class Pasaporte {
                 ", fechaExpedicion='" + fechaExpedicion + '\'' +
                 ", titular=" + (titular != null ? titular.getId() : "null") +
                 ", pais=" + (pais != null ? pais.getCodigoISO() : "null") +
+                ", elementoSeguridad=" + (elementoSeguridad != null ? elementoSeguridad.getDetalles() : "Sin elemento") +
                 '}';
     }
 }
