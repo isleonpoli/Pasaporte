@@ -8,9 +8,11 @@ import co.edu.poli.actividad.model.PasaporteDiplomatico;
 import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.Persona;
 import co.edu.poli.actividad.servicios.FlyweightFactory;
+import co.edu.poli.actividad.servicios.PasaporteAdapter;
 import co.edu.poli.actividad.servicios.PasaporteDiplomaticoBuilder;
 import co.edu.poli.actividad.servicios.PasaporteOrdinarioBuilder;
 import co.edu.poli.actividad.servicios.PasaporteTipo;
+import co.edu.poli.actividad.servicios.Proxy;
 
 public class Pruebas2 {
 
@@ -60,14 +62,35 @@ public static void main(String[] args) {
         PasaporteTipo tipo3 = factoria.getFlyweight(pais2.getNombre());
 
         // Mostrar detalles de los pasaportes usando el Flyweight
-        System.out.println("=== PATRÓN FLYWEIGHT ===");
+        /*System.out.println("=== PATRÓN FLYWEIGHT ===");
         tipo1.mostrarDetalles(p1);
         tipo2.mostrarDetalles(p2);
         tipo3.mostrarDetalles(p3);
 
         System.out.println("=== ESTADÍSTICAS FLYWEIGHT ===");
-        factoria.mostrarCache();
+        factoria.mostrarCache();*/
         
 
+        PasaporteAdapter p1Adapter = new PasaporteAdapter(p1);
+        PasaporteAdapter p2Adapter = new PasaporteAdapter(p2);
+
+        String rol = "ADMIN";
+        String rol2 = "TRABAJADOR";
+        String rol3 = "INVITADO";
+
+        Proxy proxy1 = new Proxy(p1Adapter, rol);
+        System.out.println("\n--- ROL: " + rol + " ---");
+        System.out.println("Pasaporte 1:");
+        System.out.println(proxy1.mostrarInformacionSegunRol());
+
+        Proxy proxy2 = new Proxy(p2Adapter, rol2);
+        System.out.println("\n--- ROL: " + rol2 + " ---");
+        System.out.println("Pasaporte 2:");
+        System.out.println(proxy2.mostrarInformacionSegunRol());
+
+        Proxy proxy3 = new Proxy(p1Adapter, rol3);
+        System.out.println("\n--- ROL: " + rol3 + " ---");
+        System.out.println("Pasaporte 3:");
+        System.out.println(proxy3.mostrarInformacionSegunRol());
     }
 }
