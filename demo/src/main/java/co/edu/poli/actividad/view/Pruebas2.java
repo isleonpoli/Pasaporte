@@ -7,6 +7,7 @@ import co.edu.poli.actividad.model.Pais;
 import co.edu.poli.actividad.model.PasaporteDiplomatico;
 import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.Persona;
+import co.edu.poli.actividad.servicios.Fachada;
 import co.edu.poli.actividad.servicios.FlyweightFactory;
 import co.edu.poli.actividad.servicios.PasaporteAdapter;
 import co.edu.poli.actividad.servicios.PasaporteDiplomaticoBuilder;
@@ -92,5 +93,12 @@ public static void main(String[] args) {
         System.out.println("\n--- ROL: " + rol3 + " ---");
         System.out.println("Pasaporte 3:");
         System.out.println(proxy3.mostrarInformacionSegunRol());
+
+         Fachada fachada = new Fachada();
+
+        int[] casoPrueba = {2, 1, 1};
+
+        boolean resultado = fachada.procesarPasaporte(casoPrueba[0], casoPrueba[1], casoPrueba[2]);
+        System.out.println("RESULTADO: " + (resultado ? "APROBADO" : "RECHAZADO"));
     }
 }
