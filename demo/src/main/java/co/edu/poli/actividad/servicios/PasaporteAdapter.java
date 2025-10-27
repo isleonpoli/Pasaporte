@@ -1,12 +1,13 @@
 package co.edu.poli.actividad.servicios;
 
+import co.edu.poli.actividad.model.Pasaporte;
 import co.edu.poli.actividad.model.PasaporteDiplomatico;
 import co.edu.poli.actividad.model.PasaporteOrdinario;
 
 public class PasaporteAdapter implements PasaporteInterface {
-    final private Object pasaporte; // Puede ser PasaporteOrdinario o PasaporteDiplomatico
+    final private Pasaporte pasaporte; // Puede ser PasaporteOrdinario o PasaporteDiplomatico
     
-    public PasaporteAdapter(Object pasaporte) {
+    public PasaporteAdapter(Pasaporte pasaporte) {
         this.pasaporte = pasaporte;
     }
     

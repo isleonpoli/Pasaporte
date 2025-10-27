@@ -79,7 +79,8 @@ public static void main(String[] args) {
         PasaporteTipo tipo1 = factoria.getFlyweight(pais1.getNombre());
         PasaporteTipo tipo2 = factoria.getFlyweight(pais2.getNombre());
         PasaporteTipo tipo3 = factoria.getFlyweight(pais2.getNombre());
-        PasaporteTipo tipo4 = factoria.getFlyweight(pais3.getNombre());
+        PasaporteTipo tipo4 = factoria.getFlyweight(pais3.getNombre()); // Reutiliza el de USA
+        
 
         //Mostrar detalles de los pasaportes usando el Flyweight
         System.out.println("=== PATRÓN FLYWEIGHT ===");
