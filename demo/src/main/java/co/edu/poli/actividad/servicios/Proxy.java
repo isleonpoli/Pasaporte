@@ -13,12 +13,12 @@ public class Proxy implements PasaporteInterface {
         // Solo admin tiene acceso completo
         return "ADMIN".equals(rol);
     }
-    
+     
     private boolean checkBasicAccess() {
         // Admin y TRABAJADOR tienen acceso básico
         return "TRABAJADOR".equals(rol);
     }
-    
+  
     @Override
     public String mostrarInformacionCompleta() {
         if (checkAccess()) {

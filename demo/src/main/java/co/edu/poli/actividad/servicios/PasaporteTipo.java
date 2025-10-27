@@ -2,6 +2,7 @@ package co.edu.poli.actividad.servicios;
 
 import co.edu.poli.actividad.model.PasaporteDiplomatico;
 import co.edu.poli.actividad.model.PasaporteOrdinario;
+import co.edu.poli.actividad.model.PasaporteEmergencia;
 
 public class PasaporteTipo {
     private String colorCubierta;
@@ -31,6 +32,12 @@ public class PasaporteTipo {
             numero = p.getId();
             titular = p.getTitular().getNombre();
             tipo = "Pasaporte Diplomático";
+            seguridad = p.getElementoSeguridad().getClass().getSimpleName();
+        }else if (pasaporte instanceof PasaporteEmergencia) {
+            PasaporteEmergencia p = (PasaporteEmergencia) pasaporte;
+            numero = p.getId();
+            titular = p.getTitular().getNombre();
+            tipo = "Pasaporte de Emergencia";
             seguridad = p.getElementoSeguridad().getClass().getSimpleName();
         }
         

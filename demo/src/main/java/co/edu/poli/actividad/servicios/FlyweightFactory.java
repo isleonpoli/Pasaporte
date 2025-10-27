@@ -32,7 +32,8 @@ public class FlyweightFactory {
             case "canadá": return "Rojo";
             case "francia": return "Borgoña";
             case "alemania": return "Negro";
-            default: return "Verde";
+            case "japon": return "Azul";
+            default: return "Negro";
         }
     }
     
@@ -42,6 +43,7 @@ public class FlyweightFactory {
             case "usa": case "canadá": return "Inglés";
             case "francia": return "Francés";
             case "alemania": return "Alemán";
+            case "japon": return "Japonés";
             default: return "Inglés";
         }
     }
