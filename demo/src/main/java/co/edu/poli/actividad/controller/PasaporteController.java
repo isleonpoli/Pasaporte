@@ -100,6 +100,14 @@ public class PasaporteController {
         if (p != null) {
             repo.update(p);
             ClickListar(null);
+
+        co.edu.poli.actividad.servicios.Publisher publisher = new co.edu.poli.actividad.servicios.Publisher();
+        publisher.agregarSuscriptor(new co.edu.poli.actividad.servicios.Cancilleria());
+        publisher.agregarSuscriptor(new co.edu.poli.actividad.servicios.Policia());
+        publisher.agregarSuscriptor(new co.edu.poli.actividad.servicios.MigracionColombia());
+
+        String mensaje = "Se ha modificado el pasaporte con ID: " + p.getId();
+        publisher.notificar(mensaje);
         }
     }
 
