@@ -54,14 +54,16 @@
             <padding>
                 <Insets top="15" right="15" bottom="15" left="15"/>
             </padding>
-            <Button fx:id="btnCrear" text="Crear" onAction="#ClickCrear"/>
-            <Button fx:id="btnBuscar" text="Buscar" onAction="#ClickBuscar"/>
-            <Button fx:id="btnListar" text="Listar" onAction="#ClickListar"/>
-            <Button fx:id="btnActualizar" text="Actualizar" onAction="#ClickActualizar"/>
-            <Button fx:id="btnBorrar" text="Borrar" onAction="#ClickBorrar"/>
-            <Button fx:id="btnFlitrar" text="Filtrar" onAction="#ClickFiltrar"/>
-            <Button fx:id="btnVerRegiones" text="Ver Regiones" onAction="#VerEspaciosGeograficos"/>
-        </HBox>
+                <Button fx:id="btnCrear" text="Crear" onAction="#ClickCrear"/>
+                <Button fx:id="btnBuscar" text="Buscar" onAction="#ClickBuscar"/>
+                <Button fx:id="btnListar" text="Listar" onAction="#ClickListar"/>
+                <Button fx:id="btnModificar" text="Modificar" onAction="#ClickModificar"/>
+                <ComboBox fx:id="choiceHistorial" prefWidth="250" promptText="Historial de cambios"/>
+                <Button fx:id="btnActualizar" text="Actualizar" onAction="#ClickActualizar"/>
+                <Button fx:id="btnBorrar" text="Borrar" onAction="#ClickBorrar"/>
+                <Button fx:id="btnFiltrar" text="Filtrar" onAction="#ClickFiltrar"/>
+                <Button fx:id="btnVerRegiones" text="Ver Regiones" onAction="#VerEspaciosGeograficos"/>
+                    </HBox>
     </bottom>
 
 </BorderPane>

@@ -12,30 +12,27 @@ public class PasaporteAdapter implements PasaporteInterface {
     }
     
     @Override
-    public String mostrarInformacionCompleta() {
-        if (pasaporte instanceof PasaporteOrdinario) {
-            PasaporteOrdinario p = (PasaporteOrdinario) pasaporte;
-            return "=== INFORMACIÓN COMPLETA ===\n" +
-                   "Tipo: Pasaporte Ordinario\n" +
-                   "ID: " + p.getId() + "\n" +
-                   "Titular: " + p.getTitular().getNombre() + "\n" +
-                   "País: " + p.getPais().getNombre() + "\n" +
-                   "Fecha Expedición: " + p.getFechaExpedicion() + "\n" +
-                   "Motivo: " + p.getMotivo() + "\n" +
-                   "Seguridad: " + p.getElementoSeguridad().getClass().getSimpleName();
-        } else if (pasaporte instanceof PasaporteDiplomatico) {
-            PasaporteDiplomatico p = (PasaporteDiplomatico) pasaporte;
-            return "=== INFORMACIÓN COMPLETA ===\n" +
-                   "Tipo: Pasaporte Diplomático\n" +
-                   "ID: " + p.getId() + "\n" +
-                   "Titular: " + p.getTitular().getNombre() + "\n" +
-                   "País: " + p.getPais().getNombre() + "\n" +
-                   "Fecha Expedición: " + p.getFechaExpedicion() + "\n" +
-                   "Motivo: " + p.getMotivo() + "\n" +
-                   "Seguridad: " + p.getElementoSeguridad().getClass().getSimpleName();
-        }
-        return "Tipo de pasaporte no reconocido";
+    
+public String mostrarInformacionCompleta() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("ID: ").append(pasaporte.getId()).append("\n");
+    sb.append("Fecha de expedición: ").append(pasaporte.getFechaExpedicion()).append("\n");
+    sb.append("Titular: ").append(pasaporte.getTitular() != null ? pasaporte.getTitular().getId() : "No asignado").append("\n");
+    sb.append("País: ").append(pasaporte.getPais() != null ? pasaporte.getPais().getCodigoISO() : "No asignado").append("\n");
+
+    if (pasaporte instanceof PasaporteOrdinario) {
+        PasaporteOrdinario o = (PasaporteOrdinario) pasaporte;
+        sb.append("Motivo: ").append(o.getMotivo() != null ? o.getMotivo() : "No asignado").append("\n");
+        sb.append("Elemento de seguridad: ").append(o.getElementoSeguridad() != null ? o.getElementoSeguridad() : "No asignado").append("\n");
+    } else if (pasaporte instanceof PasaporteDiplomatico) {
+        PasaporteDiplomatico d = (PasaporteDiplomatico) pasaporte;
+        sb.append("Motivo: ").append(d.getMotivo() != null ? d.getMotivo() : "No asignado").append("\n");
     }
+
+    return sb.toString();
+}
+
+
     
     @Override
     public String mostrarInformacionBasica() {
