@@ -14,9 +14,11 @@ public class Publisher {
         suscriptores.remove(suscriptor);
     }
 
-    public void notificar(String mensaje) {
+    public String notificar(String mensaje) {
+        StringBuilder resultado = new StringBuilder();
         for (Suscriptor s : suscriptores) {
-            s.recibirNotificacion(mensaje);
+            resultado.append(s.recibirNotificacion(mensaje)).append("\n");
         }
+        return resultado.toString();
     }
 }
