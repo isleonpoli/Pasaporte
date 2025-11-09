@@ -64,7 +64,7 @@ public class Prueba3 {
         boolean[] resultadosVerificacion = new boolean[3];
         for (int i = 0; i < verificaciones.length; i++) {
             System.out.println("\n--- Verificación persona " + (i + 1) + " ---");
-            resultadosVerificacion[i] = fachada.procesarPasaporte(
+            resultadosVerificacion[i] = fachada.verificacion(
                 verificaciones[i][0], 
                 verificaciones[i][1], 
                 verificaciones[i][2]
