@@ -11,6 +11,9 @@ import co.edu.poli.actividad.model.PasaporteDiplomatico;
 import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.Persona;
 import co.edu.poli.actividad.repositorio.ImplementacionPasaporte;
+import co.edu.poli.actividad.servicios.CalculadoraTarifa;
+import co.edu.poli.actividad.servicios.TarifaDiplomatico;
+import co.edu.poli.actividad.servicios.TarifaOrdinario;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -42,6 +46,10 @@ public class PasaporteController {
     private Button btnModificar;
     @FXML
     private ComboBox<String> choiceHistorial;
+
+    //Strategy
+    @FXML
+    private Label lblTarifa;
 
     private final co.edu.poli.actividad.servicios.Caretaker caretaker = new co.edu.poli.actividad.servicios.Caretaker();
     private final co.edu.poli.actividad.servicios.Originator originator = new co.edu.poli.actividad.servicios.Originator();
@@ -307,7 +315,7 @@ public class PasaporteController {
             if (l.startsWith("Motivo:")) txtMotivo.setText(l.replace("Motivo:", "").trim());
         }
     }
-     
+     */
     private void mostrarAlerta(String mensaje) {
         javafx.scene.control.Alert alerta = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
         alerta.setTitle("Información");
@@ -315,7 +323,7 @@ public class PasaporteController {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
-     */
+     
     private void mostrarEstadoEnCampos(String estado) {
         if (estado == null) {
             return;
@@ -347,5 +355,34 @@ public class PasaporteController {
             }
         }
     }
+
+//Strategy
+    @FXML
+    private void ClickCalcularTarifa() {
+        String tipo = ChoicekTipoPasaporte.getValue();
+        if (tipo == null) {
+            mostrarAlerta("Por favor seleccione un tipo de pasaporte.");
+            return;
+        }
+
+        CalculadoraTarifa calculadora = new CalculadoraTarifa();
+
+        // Seleccionar estrategia según el tipo
+        switch (tipo) {
+            case "Ordinario":
+                calculadora.setEstrategia(new TarifaOrdinario());
+                break;
+            case "Diplomatico":
+                calculadora.setEstrategia(new TarifaDiplomatico());
+                break;
+            default:
+                mostrarAlerta("Tipo de pasaporte no reconocido.");
+                return;
+        }
+
+        // Ejecutar y mostrar el resultado
+        double resultado = calculadora.ejecutarCalculo();
+        lblTarifa.setText("Costo de emisión: $" + resultado);
+    }    
 
 }
