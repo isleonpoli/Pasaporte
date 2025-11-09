@@ -24,6 +24,8 @@
             <HBox spacing="10">
                 <ChoiceBox fx:id="ChoicekTipoPasaporte" prefWidth="150"/>
                 <TextField fx:id="txtMotivo" promptText="Motivo"/>
+                <Button fx:id="btnCalcularTarifa" text="Calcular Tarifa" onAction="#ClickCalcularTarifa"/>
+                <Label fx:id="lblTarifa" text="Tarifa: $" style="-fx-font-weight: bold;"/>
             </HBox>
         </VBox>
     </top>
