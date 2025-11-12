@@ -12,6 +12,11 @@ import co.edu.poli.actividad.model.PasaporteOrdinario;
 import co.edu.poli.actividad.model.Persona;
 import co.edu.poli.actividad.repositorio.ImplementacionPasaporte;
 import co.edu.poli.actividad.servicios.CalculadoraTarifa;
+import co.edu.poli.actividad.servicios.Cancilleria;
+import co.edu.poli.actividad.servicios.ComponenteEntidad;
+import co.edu.poli.actividad.servicios.MediadorConcreto;
+import co.edu.poli.actividad.servicios.MigracionColombia;
+import co.edu.poli.actividad.servicios.Policia;
 import co.edu.poli.actividad.servicios.TarifaDiplomatico;
 import co.edu.poli.actividad.servicios.TarifaOrdinario;
 import javafx.collections.FXCollections;
@@ -51,6 +56,11 @@ public class PasaporteController {
     @FXML
     private Label lblTarifa;
 
+    private MediadorConcreto mediador = new MediadorConcreto();
+    private Policia policia = new Policia();
+    private Cancilleria cancilleria = new Cancilleria();
+    private MigracionColombia migracionColombia = new MigracionColombia();
+
     private final co.edu.poli.actividad.servicios.Caretaker caretaker = new co.edu.poli.actividad.servicios.Caretaker();
     private final co.edu.poli.actividad.servicios.Originator originator = new co.edu.poli.actividad.servicios.Originator();
     private final Map<String, co.edu.poli.actividad.servicios.Memento> mapaMementos = new HashMap<>();
@@ -61,6 +71,10 @@ public class PasaporteController {
     @FXML
     public void initialize() {
         ChoicekTipoPasaporte.getItems().addAll("Ordinario", "Diplomatico");
+
+        mediador.registrarComponente(policia);
+        mediador.registrarComponente(cancilleria);
+        mediador.registrarComponente(migracionColombia);
 
         colId.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getId()));
         colFecha.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getFechaExpedicion()));
@@ -200,6 +214,7 @@ public class PasaporteController {
             repo.update(p);
             ClickListar(null);
 
+            // ========== PATRÓN OBSERVER ==========
             co.edu.poli.actividad.servicios.Publisher publisher = new co.edu.poli.actividad.servicios.Publisher();
             publisher.agregarSuscriptor(new co.edu.poli.actividad.servicios.Cancilleria());
             publisher.agregarSuscriptor(new co.edu.poli.actividad.servicios.Policia());
@@ -211,7 +226,7 @@ public class PasaporteController {
             String notificaciones = publisher.notificar("");
 
             javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-            alert.setTitle("Notificación de Actualización");
+            alert.setTitle("Notificación de Actualización - Observer");
             alert.setHeaderText(null);
             alert.setContentText(baseMensaje + notificaciones);
 
@@ -219,6 +234,38 @@ public class PasaporteController {
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
             alert.showAndWait();
+
+            // ========== PATRÓN MEDIATOR ==========
+            // Crear un mediador temporal para esta notificación específica
+            MediadorConcreto mediadorTemp = new MediadorConcreto();
+
+            // Crear instancias temporales de las entidades
+            Policia policiaTemp = new Policia();
+            MigracionColombia migracionTemp = new MigracionColombia();
+
+            // Registrar solo Policía y Migración Colombia
+            mediadorTemp.registrarComponente(policiaTemp);
+            mediadorTemp.registrarComponente(migracionTemp);
+
+            // Crear mensaje para el mediator
+            String mensajeMediador = "Actualización de pasaporte ID: " + p.getId();
+
+            // Construir la notificación
+            StringBuilder notificacionMediador = new StringBuilder();
+            notificacionMediador.append("Notificación para verificación adicional:\n\n");
+            notificacionMediador.append("- ").append(policiaTemp.getNombre()).append("\n");
+            notificacionMediador.append("- ").append(migracionTemp.getNombre()).append("\n");
+            notificacionMediador.append("\nMensaje: ").append(mensajeMediador);
+
+            // Mostrar segunda alerta con el patrón Mediator
+            javafx.scene.control.Alert alertMediador = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+            alertMediador.setTitle("Notificación Adicional - Mediator");
+            alertMediador.setContentText(notificacionMediador.toString());
+
+            alertMediador.setResizable(true);
+            alertMediador.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
+            alertMediador.showAndWait();
         }
     }
 
@@ -323,7 +370,7 @@ public class PasaporteController {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
-     
+
     private void mostrarEstadoEnCampos(String estado) {
         if (estado == null) {
             return;
@@ -383,6 +430,63 @@ public class PasaporteController {
         // Ejecutar y mostrar el resultado
         double resultado = calculadora.ejecutarCalculo();
         lblTarifa.setText("Costo de emisión: $" + resultado);
-    }    
+    }
+
+    @FXML
+    void ClickPolicia(ActionEvent event) {
+        mostrarDialogoEnvio(policia);
+    }
+
+    @FXML
+    void ClickCancilleria(ActionEvent event) {
+        mostrarDialogoEnvio(cancilleria);
+    }
+
+    @FXML
+    void ClickMigracionColombia(ActionEvent event) {
+        mostrarDialogoEnvio(migracionColombia);
+    }
+
+    private void mostrarDialogoEnvio(ComponenteEntidad remitente) {
+        javafx.scene.control.Dialog<String> dialog = new javafx.scene.control.Dialog<>();
+        dialog.setTitle("Enviar mensaje desde " + remitente.getNombre());
+        dialog.setHeaderText("Escriba el mensaje a enviar:");
+
+        javafx.scene.control.ButtonType enviarButton = new javafx.scene.control.ButtonType("Enviar", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(enviarButton, javafx.scene.control.ButtonType.CANCEL);
+
+        javafx.scene.control.TextArea textArea = new javafx.scene.control.TextArea();
+        textArea.setPromptText("Escriba su mensaje aquí...");
+        textArea.setPrefRowCount(5);
+        textArea.setPrefColumnCount(40);
+
+        dialog.getDialogPane().setContent(textArea);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == enviarButton) {
+                return textArea.getText();
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(mensaje -> {
+            if (!mensaje.trim().isEmpty()) {
+                // Obtener las entidades que recibirán el mensaje
+                String destinatarios = mediador.obtenerNotificaciones(remitente, mensaje);
+
+                // Enviar el mensaje a través del mediador
+                remitente.enviar(mensaje);
+
+                // Mostrar confirmación
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                alert.setTitle("Mensaje Enviado");
+                alert.setHeaderText("Mensaje enviado desde " + remitente.getNombre());
+                alert.setContentText("Se ha notificado a:\n\n" + destinatarios + "\nMensaje: " + mensaje);
+                alert.setResizable(true);
+                alert.getDialogPane().setMinHeight(javafx.scene.layout.Region.USE_PREF_SIZE);
+                alert.showAndWait();
+            }
+        });
+    }
 
 }

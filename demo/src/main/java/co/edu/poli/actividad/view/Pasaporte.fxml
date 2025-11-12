@@ -52,10 +52,11 @@
 
     <!-- 🔹 Parte inferior: Botones -->
     <bottom>
-        <HBox spacing="15" alignment="center" style="-fx-background-color: #e9ecef;">
-            <padding>
-                <Insets top="15" right="15" bottom="15" left="15"/>
-            </padding>
+        <VBox spacing="10">
+            <HBox spacing="15" alignment="center" style="-fx-background-color: #e9ecef;">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
                 <Button fx:id="btnCrear" text="Crear" onAction="#ClickCrear"/>
                 <Button fx:id="btnBuscar" text="Buscar" onAction="#ClickBuscar"/>
                 <Button fx:id="btnListar" text="Listar" onAction="#ClickListar"/>
@@ -65,7 +66,19 @@
                 <Button fx:id="btnBorrar" text="Borrar" onAction="#ClickBorrar"/>
                 <Button fx:id="btnFiltrar" text="Filtrar" onAction="#ClickFiltrar"/>
                 <Button fx:id="btnVerRegiones" text="Ver Regiones" onAction="#VerEspaciosGeograficos"/>
-                    </HBox>
+            </HBox>
+            
+            <!-- Nueva sección para el patrón Mediator -->
+            <HBox spacing="15" alignment="center" style="-fx-background-color: #d4edda;">
+                <padding>
+                    <Insets top="10" right="15" bottom="10" left="15"/>
+                </padding>
+                <Label text="Comunicación entre entidades:" style="-fx-font-weight: bold;"/>
+                <Button fx:id="btnPolicia" text="Policía" onAction="#ClickPolicia" style="-fx-background-color: #007bff; -fx-text-fill: white;"/>
+                <Button fx:id="btnCancilleria" text="Cancillería" onAction="#ClickCancilleria" style="-fx-background-color: #28a745; -fx-text-fill: white;"/>
+                <Button fx:id="btnMigracionColombia" text="Migración Colombia" onAction="#ClickMigracionColombia" style="-fx-background-color: #ffc107;"/>
+            </HBox>
+        </VBox>
     </bottom>
 
 </BorderPane>
