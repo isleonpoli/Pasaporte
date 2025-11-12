@@ -47,6 +47,8 @@
                     <TableColumn fx:id="colMotivo" text="Motivo" prefWidth="200"/>
                 </columns>
             </TableView>
+             <Label text="🌐 Control de Estado del Sistema" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+             <TreeView fx:id="treeEstados" prefHeight="250" prefWidth="300"/>
         </VBox>
     </center>
 

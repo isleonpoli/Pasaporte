@@ -32,6 +32,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
@@ -55,6 +57,11 @@ public class PasaporteController {
     //Strategy
     @FXML
     private Label lblTarifa;
+
+    //State
+    @FXML
+private TreeView<String> treeEstados;
+private final co.edu.poli.actividad.servicios.ContextoEstado contextoEstado = new co.edu.poli.actividad.servicios.ContextoEstado();
 
     private MediadorConcreto mediador = new MediadorConcreto();
     private Policia policia = new Policia();
@@ -147,7 +154,64 @@ public class PasaporteController {
                 mostrarEstadoEnCampos(m.getEstado());
             }
         });
+        inicializarTreeViewEstados();
+
     }
+
+    private void inicializarTreeViewEstados() {
+    // Crear raíz con el estado actual
+    TreeItem<String> root = new TreeItem<>("Estado actual: " + contextoEstado.getEstadoActual().getNombre());
+    root.setExpanded(true);
+    treeEstados.setRoot(root);
+
+    actualizarTransiciones(root);
+
+    // Listener dinámico: al hacer clic en un estado hijo
+    treeEstados.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+        if (newVal == null) return;
+        String seleccionado = newVal.getValue();
+
+        // Si el nodo es una transición posible, cambiar de estado
+        if (!seleccionado.startsWith("Estado actual: ")) {
+            cambiarEstado(seleccionado);
+        }
+    });
+}
+
+private void actualizarTransiciones(TreeItem<String> root) {
+    root.getChildren().clear();
+    for (String transicion : contextoEstado.getEstadoActual().obtenerTransicionesPosibles()) {
+        root.getChildren().add(new TreeItem<>(transicion));
+    }
+}
+
+private void cambiarEstado(String nombre) {
+    co.edu.poli.actividad.servicios.Estado nuevoEstado;
+    switch (nombre) {
+        case "Estado Revisión":
+            nuevoEstado = new co.edu.poli.actividad.servicios.EstadoRevision();
+            break;
+        case "Solicitud Visa":
+            nuevoEstado = new co.edu.poli.actividad.servicios.SolicitudVisa();
+            break;
+        case "Frontera Cerrada":
+            nuevoEstado = new co.edu.poli.actividad.servicios.FronteraCerrada();
+            break;
+        case "Estado Normal":
+            nuevoEstado = new co.edu.poli.actividad.servicios.EstadoNormal();
+            break;
+        default:
+            mostrarAlerta("Transición no válida: " + nombre);
+            return;
+    }
+
+    // Actualizar el contexto
+    contextoEstado.cambiarEstado(nuevoEstado);
+
+    // Actualizar la vista
+    treeEstados.getRoot().setValue("Estado actual: " + nuevoEstado.getNombre());
+    actualizarTransiciones(treeEstados.getRoot());
+}
 
 // Helper seguro para evitar NPE y convertir null->""
     private String safe(String s) {
